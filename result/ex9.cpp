@@ -121,4 +121,3 @@ int main () {
   trySolution(output);
 }
 /* Ignore and do not change the code above */
-

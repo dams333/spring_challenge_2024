@@ -7,7 +7,14 @@
 #include <locale>
 using namespace std;
 
+class Point {
+public:
+  int x;
+  int y;
 
+  Point() {this->x = 0; this->y = 0;};
+  Point(int x, int y) {this->x = x; this->y = y;}
+};
 
 /**
  * @param n_rows The height of the image.
@@ -16,16 +23,36 @@ using namespace std;
  * @return The total length of wire needed to deploy the network.
  */
 int getCableLength(int n_rows, int n_cols, vector<string> image) {
+  map<char, vector<Point>> byColors;
+  for (int x = 0; x < n_cols; x++) {
+    for (int y = 0; y < n_rows; y++) {
+      char c = image[y][x];
+      if (!byColors.contains(c))
+        byColors[c] = vector<Point>();
+      byColors[c].push_back(Point(x, y));
+    }
+  }
+
   int res = 0;
-  for (int i = 0; i < n_rows*n_cols; i++) {
-    for (int j = i + 1; j < n_rows*n_cols; j++) {
-      int y1 = i / n_cols;
-      int x1 = i % n_cols;
-      int y2 = j / n_cols;
-      int x2 = j % n_cols;
-      if (image[y1][x1] == image[y2][x2]) {
-        res += (abs(x1-x2)+abs(y1-y2)) * 2;
-      }
+  for (pair<char, vector<Point>> elem : byColors) {
+    vector<Point> pts = elem.second;
+    vector<int> rows;
+    vector<int> cols;
+    for (Point p : pts) {
+      rows.push_back(p.y);
+      cols.push_back(p.x);
+    }
+    std::sort(rows.begin(), rows.end());
+    std::sort(cols.begin(), cols.end());
+    for (int i = 1; i < cols.size(); i++) {
+      res += (i * (cols.size() - i) * (cols[i] - cols[i - 1])) * 2;
+      if (res >= 1000000007)
+        res %= 1000000007;
+    }
+    for (int i = 1; i < rows.size(); i++) {
+      res += (i * (rows.size() - i) * (rows[i] - rows[i - 1])) * 2;
+      if (res >= 1000000007)
+        res %= 1000000007;
     }
   }
 

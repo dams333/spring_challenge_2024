@@ -1,4 +1,4 @@
-nclude <iostream>
+#include <iostream>
 #include <jsoncpp/json/json.h>
 #include <cstring>
 #include <unordered_map>
@@ -8,16 +8,6 @@ nclude <iostream>
 #include <map>
 #include <cmath>
 using namespace std;
-
-
-bool stringMadeOfUniqueChar(string s) {
-  char c = s[0];
-  for (char ch : s) {
-    if (ch != c)
-      return false;
-  }
-  return true;
-}
 
 class Point {
 public:
@@ -35,54 +25,48 @@ public:
  * @return The parameters of the largest circle [centerRow, centerCol, radius].
  */
 vector<int> findLargestCircle(int n_rows, int n_cols, vector<string> image) {
-  int bigRadius = 0;
-  int bigX = 0;
-  int bigY = 0;
-  
-  //For a radius X, list all offsets (x, y) from the center that are on the circle
+  // Write your code here
+
   int biggestDiameter = max(n_rows, n_cols);
   map<int, vector<Point>> circleShapes;
-  for (int i = 0; i <= biggestDiameter/2; i++)
+  for (int i = 0; i <= biggestDiameter/2; i++) {
     circleShapes[i] = vector<Point>();
+  }
   for (int y = -biggestDiameter/2; y <= biggestDiameter/2; y++) {
     for (int x = -biggestDiameter/2; x <= biggestDiameter/2; x++) {
-      int radius = (int)sqrtf(powf(x - 0, 2) + powf(y - 0, 2));
-      if (radius <= biggestDiameter/2) {
+      int radius = (int)sqrtf(powf(x, 2) + powf(y, 2));
+      if (radius <= biggestDiameter/2)
         circleShapes[radius].push_back(Point(x, y));
-      }
     }
   }
 
+  int biggestRadius = 0;
+  Point biggestCenter = Point(0, 0);
   for (int y = 0; y < n_rows; y++) {
-    int maxTopRadius = y;
-    int maxBottomRadius = n_rows - y - 1;
     for (int x = 0; x < n_cols; x++) {
-      int maxLeftRadius = x;
-      int maxRightRadius = n_cols - x -1;
-      int maxRadius = min({maxTopRadius, maxBottomRadius, maxLeftRadius, maxRightRadius});
-
-      for(int r = maxRadius; r > bigRadius; r--) {
-        string circle = "";
+      int maxRadius = min({y, n_rows - y -1, x, n_cols - x -1});
+      for (int r = maxRadius; r  > biggestRadius; r--) {
+        char circle = '\0';
         bool valid = true;
         for (Point p : circleShapes.at(r)) {
-          circle += image[y + p.y][x + p.x];
-          if (!stringMadeOfUniqueChar(circle)) {
-            valid = false;
-            break;
+          char current = image[y + p.y][x + p.x];
+          if (circle == '\0' || circle == current) {
+            circle = current;
+            continue;
           }
+          valid = false;
+          break;
         }
         if (valid) {
-          bigRadius = r;
-          bigX = x;
-          bigY = y;
-          break;
+          biggestRadius = r;
+          biggestCenter.x = x;
+          biggestCenter.y = y;
         }
       }
     }
   }
 
-  cerr << bigY << " | " << bigX << " | " << bigRadius << endl;
-  return {bigY, bigX, bigRadius};
+  return {biggestCenter.y, biggestCenter.x, biggestRadius};
 }
 
 /* Ignore and do not change the code below */

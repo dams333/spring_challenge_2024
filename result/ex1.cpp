@@ -16,14 +16,13 @@ using namespace std;
  */
 vector<int> buildingHeights(int n, vector<string> building_map) {
   vector<int> res;
-  
-  for (string b : building_map) {
-    int count = 0;
-    for (char c : b) {
+  for (string s : building_map) {
+    int r = 0;
+    for (char c : s) {
       if (c == '*')
-        count++;
+        r++;
     }
-    res.push_back(count);
+    res.push_back(r);
   }
 
   return res;

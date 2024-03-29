@@ -1,4 +1,4 @@
-TH params AS(
+WITH params AS(
     SELECT
         puKeys.N as pubN,
         prKeys.D as privD
